@@ -49,7 +49,6 @@ def clean_encoding_error(text):
     return text
 def remove_urls(text):
     pattern = re.compile(r'https?://\S+|www\.\S+')  # Regex pattern for matching URLs
-
     # Replace URLs with an empty string
     cleaned_text = re.sub(pattern, '', text)
     cleaned_text = re.sub(r"pic.twitter.com\S+",'', cleaned_text)
@@ -64,6 +63,7 @@ def clean_twitter_text(text):
     text = re.sub(r'\bMT(\s)?@\w+:?', '', text)
     text = re.sub(r'\bDT(\s)?@\w+(\:)?', '', text)
     text = re.sub(r'\b[Vv]ia @{1,}\w+\b', '', text)
+    text = re.sub(r'\bvia \/r\/\w+\b', '', text)
     text = re.sub(r"@(\d{1,2}:\d{2}(:\d{2})?\s*(?:AM|PM)?)",r"@ \1",text)
     text = re.sub(r"(\.)?@{1,}(\')?\w+(\:)?",'',text)
     text = re.sub(r"\bview and download video\b",' ',text,flags=re.I)
@@ -84,6 +84,50 @@ def fix_repeating_characters(text):
             logic_text=r'\b'+row['regex_logic']+r'\b'
             fixed_text=re.sub(logic_text,row['word'],fixed_text)
     return fixed_text
+def remove_emoticons(text):
+    text=re.sub(r'(?<!\S)\:(-)?[DPpOoSs]\b',' ',text)
+    text=re.sub(r'(?<!\S)(>)?[:;](\')?(-)?[)(]{1,}\s*(?!\S)',' ',text)
+    text=re.sub(r'(?<!\S)\;-\;\s*(?!\S)',' ',text)
+    text=re.sub(r'(?<!\S)(>)?:3{1,}\b', ' ', text)
+    text=re.sub(r'(?<!\S)=/\s*(?!\S)', ' ', text)
+    text=re.sub(r'(?<!\S)\:/(?!\S)', ' ', text)
+    text=re.sub(r'(?<!\S)[><-]_{1,}[<>-]\s*(?!\S)', ' ', text)
+    text=re.sub(r'\b[OT]_{1,}[oT]\b', ' ', text)
+    text=re.sub(r'(?<!\S)=[pP]\b', ' ', text)
+    text=re.sub(r'\b[Xx]D\b', ' ', text)
+    text=re.sub(r'(?<!\S)[<]3\b', ' ', text)
+    # text=re.sub(r'(?<!\d)[:;]\){1,}(?<!\d)', ' ', text)
+    return text
+def clean_slang(text):
+    #abbreviations
+    text=re.sub(r'\blol\b','laugh out loud',text,flags=re.I)
+    text=re.sub(r'\bfyi\b','for your information',text,flags=re.I)
+    text=re.sub(r'\blmao\b','laugh my ass off',text,flags=re.I)
+    text=re.sub(r'\blmfao\b','laugh my fucking ass off',text,flags=re.I)
+    text=re.sub(r'\bsmh\b','shake my hand',text,flags=re.I)
+    text=re.sub(r'\bomg\b','oh my god',text,flags=re.I)
+    text=re.sub(r'\bwtf\b','what the fuck',text,flags=re.I)
+    #slang terms
+    text=re.sub(r'\b3p - 3\\:30a\b','3p - 3:30a',text)
+    text=re.sub(r'\b2k(\d{2})\b',r'20\1',text,flags=re.I)
+    text=re.sub(r'\b(\d{1,})\,(000)\b',r'\1\2',text,flags=re.I)
+    text=re.sub(r'\bw/e\b','whatever',text,flags=re.I)
+    text=re.sub(r'\bP/U\b','pick up',text,flags=re.I)
+    text=re.sub(r'(\bb4\b)|(\bbe4\b)','before',text,flags=re.I)
+    text=re.sub(r'\bthx\b','thank you',text,flags=re.I)
+    #misspellings
+    text=re.sub(r'\bamageddon\b','armageddon',text,flags=re.I)
+    text=re.sub(r'\brecentlu\b','recently',text,flags=re.I)
+    text=re.sub(r'\bexp0sed\b','exposed',text,flags=re.I)
+    text=re.sub(r'\bph0tos\b','photos',text,flags=re.I)
+    text=re.sub(r'\btrfc\b','traffic',text,flags=re.I)
+    text=re.sub(r'\blonge rGreen\b','longer Green',text)
+    
+    return text
+def expand_contractions(text):
+    expanded_text = contractions.fix(text)
+    expanded_text=re.sub(r"(\b\w+)'s\b",r"\1",expanded_text)
+    return expanded_text
 def clean_text(text):
     text=clean_html_text(text)
     text=remove_partial_tag(text)
@@ -92,33 +136,32 @@ def clean_text(text):
     text=new_line(text)
     text=clean_twitter_text(text)
     text=fix_repeating_characters(text)
+    text=remove_emoticons(text)
+    text=clean_slang(text)
+    text=expand_contractions(text)
     return text
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics.pairwise import cosine_similarity
-def fill_missing(df,text_col,target_col):
-    for index, row in df.iterrows():
-        if pd.isnull(row['new_target']):
-            if row[target_col] == 0.5:
-                # Grouping based on 'target_p'
-                grouped = df.groupby(target_col)[text_col].apply(list)
-                # Create TF-IDF vectorizer
-                tfidf_vectorizer = TfidfVectorizer()
-                # Fit and transform text data
-                tfidf_matrix = tfidf_vectorizer.fit_transform(grouped[0] + grouped[1] + [row[text_col]])
-                # Calculate similarity with both groups
-                sim_group0 = max(cosine_similarity(tfidf_matrix[:len(grouped[0])], tfidf_matrix[-1]))
-                sim_group1 = max(cosine_similarity(tfidf_matrix[len(grouped[0]):-1], tfidf_matrix[-1]))
-                print(sim_group0, sim_group1)
-                print(row[text_col])
-                # Fill with the target group with higher similarity
-                df.at[index, 'new_target'] = 0 if sim_group0 > sim_group1 else 1
+def manual_impute_label(df,text_col):
+    df.loc[(df[text_col] == 'To fight bioterrorism sir.')&df['new_target'].isna(), 'new_target'] = 0
+    df.loc[(df['text'] == "Mmmmmm I'm burning.... I'm burning buildings I'm building.... Oooooohhhh oooh ooh...")&df['new_target'].isna(), 'new_target'] = 0
+    df.loc[(df['text'] == "that horrible sinking feeling when you\x89Ûªve been at home on your phone for a while and you realise its been on 3G this whole time")&df['new_target'].isna(), 'new_target'] = 0
+    df.loc[(df['text'] == "In #islam saving a person is equal in reward to saving all humans! Islam is the opposite of terrorism!")&df['new_target'].isna(), 'new_target'] = 0
+    df.loc[(df['text'] == "I Pledge Allegiance To The P.O.P.E. And The Burning Buildings of Epic City. ??????")&df['new_target'].isna(), 'new_target'] = 0
+    df.loc[(df['text'] == "wowo--=== 12000 Nigerian refugees repatriated from Cameroon")&df['new_target'].isna(), 'new_target'] = 0
+    df.loc[(df['text'] == "Hellfire! We donÛªt even want to think about it or mention it so letÛªs not do anything that leads to it #islam!")&df['new_target'].isna(), 'new_target'] = 0
+    df.loc[(df['text'] == "like for the music video I want some real action shit like burning buildings and police chases not some weak ben winston shit")&df['new_target'].isna(), 'new_target'] = 0
+    df.loc[(df['text'] == "RT NotExplained: The only known image of infamous hijacker D.B. Cooper. http://t.co/JlzK2HdeTG")&df['new_target'].isna(), 'new_target'] = 1
+    df.loc[(df['text'] == "Caution: breathing may be hazardous to your health.")&df['new_target'].isna(), 'new_target'] = 1
     return df
-def text_deduplication(df,text_col,target_col):
+def text_mislabels(df,text_col,target_col):
     df_mislabeled = df.groupby([text_col],as_index=False)[target_col].mean()
-    new_df=df_mislabeled#df_mislabeled[df_mislabeled[target_col]!=0.5]
+    df_mislabeled.to_csv('df_mislabeled.csv',index=False)
+    new_df=df_mislabeled.reset_index()#df_mislabeled[df_mislabeled[target_col]!=0.5]
     new_df['new_target']=np.where(new_df[target_col] > 0.5, 1, np.where(new_df[target_col] < 0.5, 0, np.nan))#np.where(new_df[target_col]>0.5,1,0)
     # corrected_labels = df.groupby(text_col)[target_col].agg(lambda x: x.mode()[0] if len(x.mode()) == 1 else None).reset_index()
     # tweets_df_corrected_labels = pd.merge(df, corrected_labels, on=text_col, how='left', suffixes=('_original', '_corrected'))
     # new_df=tweets_df_corrected_labels.drop_duplicates(text_col, keep='first')
-    new_df=fill_missing(new_df,text_col,target_col) # this function will make sure the values that are missing get filled out
-    return new_df
+    #new_df=fill_missing(new_df,text_col,target_col) # this function will make sure the values that are missing get filled out
+    #new_df=fill_missing(new_df,text_col,target_col)
+    new_df=manual_impute_label(new_df,'text')
+    new_df.drop(labels=['index',target_col],axis=1,inplace=True)
+    return df.merge(new_df,on=text_col)

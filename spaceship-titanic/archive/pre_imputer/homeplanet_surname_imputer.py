@@ -1,11 +1,11 @@
 import numpy as np
 import pandas as pd
-class CustomSimpleImputer:
+class HS_Imputer:
     def __init__(self):
         self.df_surname=None
-    def fit_surname_planet(self,df):
+    def fit(self,df):
         self.df_surname=df[['Surname','HomePlanet']].groupby(['Surname'])['HomePlanet'].apply(lambda x: x.mode().iloc[0] if len(x.dropna()) > 0 else None).reset_index()
-    def transform_surname(self,df):
+    def transform(self,df):
         if(self.df_surname.empty):
             raise ValueError("df_surname not fitted")
         else:
@@ -14,6 +14,7 @@ class CustomSimpleImputer:
         df.drop(columns=['HomePlanet_right'], inplace=True)
         return df
     def fit_transform(self, X):
-        X[['First_name','Surname']] = X['Name'].str.split(' ', expand=True)
-        self.fit_surname_planet(X)
-        return self.transform_surname(X)
+        self.fit(X)
+        return self.transform(X)
+    def get_hs_df(self):
+        return self.df_surname
