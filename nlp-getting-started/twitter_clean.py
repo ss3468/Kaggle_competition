@@ -98,6 +98,32 @@ def remove_emoticons(text):
     text=re.sub(r'(?<!\S)[<]3\b', ' ', text)
     # text=re.sub(r'(?<!\d)[:;]\){1,}(?<!\d)', ' ', text)
     return text
+def convert_emoticons(text):
+    # Standard boundaries
+    text=re.sub(r'(?<!\S)[<]3\b', 'Heart', text)
+    text=re.sub(r'(?<!\S):(-)?D\b', 'Laughing', text)
+    text=re.sub(r'(?<!\S):(-)?[Pp]\b', 'cheeky', text)
+    text=re.sub(r'(?<!\S)=[pP]\b', 'cheeky', text)
+    text=re.sub(r'(?<!\S):[Ss]\b', 'Skeptical', text)
+    text=re.sub(r'\b[Xx]D\b', 'Laughing', text)
+    text=re.sub(r'(?<!\S)[>]:3{1,}\b', 'playfulness', text)
+    text=re.sub(r'(?<!\S):(-)?[oO]\b', 'Surprise', text)
+    text=re.sub(r'\bO_o\b', 'Surprised', text)
+    text=re.sub(r'\bT_T\b', 'Annoyed', text)
+    text=re.sub(r'(?<!\S):(-)?3\b', 'mischievous', text)
+    # non Standard
+    text=re.sub(r'(?<!\S):(-)?[)]\s*(?!\S)', 'Smiley', text)
+    text=re.sub(r'(?<!\S);(-)?[)]\s*(?!\S)', 'Wink', text)
+    text=re.sub(r'(?<!\S):(-)?[)]{2}\s*(?!\S)', 'Very Happy', text)
+    text=re.sub(r'(?<!\S);-;\s*(?!\S)', 'Sad', text)
+    text=re.sub(r'(?<!\S)\:(-)?/(?!\S)', 'Skeptical', text)
+    text=re.sub(r'(?<!\S)=/\s*(?!\S)', 'Skeptical', text)
+    text=re.sub(r'((?<!\S)<_<\s*(?!\S))|((?<!\S)>_>\s*(?!\S))', 'Devious', text)
+    text=re.sub(r'(?<!\S)(>_<)\s*(?!\S)', 'Annoyed', text)
+    text=re.sub(r'(?<!\S)>:[(]\s*(?!\S)', 'Angry', text)
+    text=re.sub(r'(?<!\S):(-)?[(]\s*(?!\S)', 'Frown', text)
+    text=re.sub(r'(?<!\S):\'(-)?[(]\s*(?!\S)', 'Crying', text)
+    return text
 def clean_slang(text):
     #abbreviations
     text=re.sub(r'\blol\b','laugh out loud',text,flags=re.I)
@@ -105,8 +131,13 @@ def clean_slang(text):
     text=re.sub(r'\blmao\b','laugh my ass off',text,flags=re.I)
     text=re.sub(r'\blmfao\b','laugh my fucking ass off',text,flags=re.I)
     text=re.sub(r'\bsmh\b','shake my hand',text,flags=re.I)
+    text=re.sub(r'\bcya\b','see you',text,flags=re.I)
     text=re.sub(r'\bomg\b','oh my god',text,flags=re.I)
     text=re.sub(r'\bwtf\b','what the fuck',text,flags=re.I)
+    text=re.sub(r'\btbh\b','to be honest',text,flags=re.I)
+    text=re.sub(r'\bbrb\b','be right back',text,flags=re.I)
+    text=re.sub(r'\bftw\b','for the win',text,flags=re.I)
+    text=re.sub(r'\bidc\b','I don\'t care',text,flags=re.I)
     #slang terms
     text=re.sub(r'\b3p - 3\\:30a\b','3p - 3:30a',text)
     text=re.sub(r'\b2k(\d{2})\b',r'20\1',text,flags=re.I)
@@ -115,6 +146,13 @@ def clean_slang(text):
     text=re.sub(r'\bP/U\b','pick up',text,flags=re.I)
     text=re.sub(r'(\bb4\b)|(\bbe4\b)','before',text,flags=re.I)
     text=re.sub(r'\bthx\b','thank you',text,flags=re.I)
+    text=re.sub(r'\btlk\b','talk',text,flags=re.I)
+    text=re.sub(r'\bbb\b','baby',text,flags=re.I)
+    text=re.sub(r'\bwidout\b','without',text,flags=re.I)
+    text=re.sub(r'\s*&\s*',' and ',text)
+    text=re.sub(r'(\bw/o\b)|(\bw/out\b)','without',text)
+    text=re.sub(r'\bw/(?!\S)', 'with', text)
+    text=re.sub(r'\bw/(\w+)',r'with \1', text)
     #misspellings
     text=re.sub(r'\bamageddon\b','armageddon',text,flags=re.I)
     text=re.sub(r'\brecentlu\b','recently',text,flags=re.I)
@@ -122,12 +160,13 @@ def clean_slang(text):
     text=re.sub(r'\bph0tos\b','photos',text,flags=re.I)
     text=re.sub(r'\btrfc\b','traffic',text,flags=re.I)
     text=re.sub(r'\blonge rGreen\b','longer Green',text)
-    
     return text
 def expand_contractions(text):
     expanded_text = contractions.fix(text)
     expanded_text=re.sub(r"(\b\w+)'s\b",r"\1",expanded_text)
     return expanded_text
+def remove_punctuation(text):
+    return re.sub(r'(?<!\w)[^\w\s]|[^\w\s](?!\w)', '', text)
 def clean_text(text):
     text=clean_html_text(text)
     text=remove_partial_tag(text)
@@ -136,9 +175,11 @@ def clean_text(text):
     text=new_line(text)
     text=clean_twitter_text(text)
     text=fix_repeating_characters(text)
-    text=remove_emoticons(text)
+    text=convert_emoticons(text)
+    # text=remove_emoticons(text)
     text=clean_slang(text)
     text=expand_contractions(text)
+    text=remove_punctuation(text)
     return text
 def manual_impute_label(df,text_col):
     df.loc[(df[text_col] == 'To fight bioterrorism sir.')&df['new_target'].isna(), 'new_target'] = 0
