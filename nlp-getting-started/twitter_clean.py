@@ -138,6 +138,7 @@ def clean_slang(text):
     text=re.sub(r'\bbrb\b','be right back',text,flags=re.I)
     text=re.sub(r'\bftw\b','for the win',text,flags=re.I)
     text=re.sub(r'\bidc\b','I don\'t care',text,flags=re.I)
+    text=re.sub(r'\bicymi\b','in case you missed it',text,flags=re.I)
     #slang terms
     text=re.sub(r'\b3p - 3\\:30a\b','3p - 3:30a',text)
     text=re.sub(r'\b2k(\d{2})\b',r'20\1',text,flags=re.I)
@@ -153,19 +154,28 @@ def clean_slang(text):
     text=re.sub(r'(\bw/o\b)|(\bw/out\b)','without',text)
     text=re.sub(r'\bw/(?!\S)', 'with', text)
     text=re.sub(r'\bw/(\w+)',r'with \1', text)
+    text=re.sub(r'\bbruh\b','bro',text,flags=re.I)
+    text=re.sub(r'\bdey\b','they',text,flags=re.I)
+    text=re.sub(r'\bsrsly\b','seriously',text,flags=re.I)
+    text=re.sub(r'\bwhatevs\b','whatever',text)
+    text=re.sub(r'\bya\b','you',text)
     #misspellings
     text=re.sub(r'\bamageddon\b','armageddon',text,flags=re.I)
+    text=re.sub(r'\bamazin\b','amazing',text,flags=re.I)
+    text=re.sub(r'\bblowin\b','blowing',text,flags=re.I)
     text=re.sub(r'\brecentlu\b','recently',text,flags=re.I)
     text=re.sub(r'\bexp0sed\b','exposed',text,flags=re.I)
     text=re.sub(r'\bph0tos\b','photos',text,flags=re.I)
     text=re.sub(r'\btrfc\b','traffic',text,flags=re.I)
     text=re.sub(r'\blonge rGreen\b','longer Green',text)
+    text=re.sub(r'\bWedn..\b','wednesday',text)
     return text
 def expand_contractions(text):
     expanded_text = contractions.fix(text)
     expanded_text=re.sub(r"(\b\w+)'s\b",r"\1",expanded_text)
     return expanded_text
 def remove_punctuation(text):
+    text=re.sub(r'(\w+)(\.){2,}(\w+)',r'\1 \3',text)
     return re.sub(r'(?<!\w)[^\w\s]|[^\w\s](?!\w)', '', text)
 def clean_text(text):
     text=clean_html_text(text)
