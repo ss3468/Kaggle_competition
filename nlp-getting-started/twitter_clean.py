@@ -57,6 +57,9 @@ def new_line(text):
     text = re.sub(r'\t', ' ', text) # remove tabs
     text = re.sub(r'\n', ' ', text) # remove line jump
     return text
+def adjust_user_handle(text):
+    text=re.sub(r'(?<!\S)@Blizzard_Gamin ight\b','@Blizzard_Gaminight',text,flags=re.I)
+    return text
 def clean_twitter_text(text):
     text = re.sub(r'(\bRT(\s)?@\w+(\:)?)|(\bRT\s\'@\w+(\:)?)', '', text)
     text = re.sub(r"\bRT\b", "Retweet", text)
@@ -65,6 +68,7 @@ def clean_twitter_text(text):
     text = re.sub(r'\b[Vv]ia @{1,}\w+\b', '', text)
     text = re.sub(r'\bvia \/r\/\w+\b', '', text)
     text = re.sub(r"@(\d{1,2}:\d{2}(:\d{2})?\s*(?:AM|PM)?)",r"@ \1",text)
+    text=adjust_user_handle(text)
     text = re.sub(r"(\.)?@{1,}(\')?\w+(\:)?",'',text)
     text = re.sub(r"\bview and download video\b",' ',text,flags=re.I)
     text = re.sub(r'(\w+)#(\w+)', r'\1 \2', text)
@@ -139,6 +143,7 @@ def clean_slang(text):
     text=re.sub(r'\bftw\b','for the win',text,flags=re.I)
     text=re.sub(r'\bidc\b','I don\'t care',text,flags=re.I)
     text=re.sub(r'\bicymi\b','in case you missed it',text,flags=re.I)
+    text=re.sub(r'\b2day\b','today',text,flags=re.I)
     #slang terms
     text=re.sub(r'\b3p - 3\\:30a\b','3p - 3:30a',text)
     text=re.sub(r'\b2k(\d{2})\b',r'20\1',text,flags=re.I)
@@ -159,6 +164,10 @@ def clean_slang(text):
     text=re.sub(r'\bsrsly\b','seriously',text,flags=re.I)
     text=re.sub(r'\bwhatevs\b','whatever',text)
     text=re.sub(r'\bya\b','you',text)
+    text=re.sub(r'\bany1\b','anyone',text,flags=re.I)
+    text=re.sub(r'\bU.S \(A\)(?!\S)','USA',text)
+    text=re.sub(r'\b(\d{1,})(\s?)yr(s?)\b',r'\1 year\3',text,flags=re.I)
+    text=re.sub(r'\b(\d{1,})JST\b',r'\1 JST',text,flags=re.I)
     #misspellings
     text=re.sub(r'\bamageddon\b','armageddon',text,flags=re.I)
     text=re.sub(r'\bamazin\b','amazing',text,flags=re.I)
@@ -167,8 +176,17 @@ def clean_slang(text):
     text=re.sub(r'\bexp0sed\b','exposed',text,flags=re.I)
     text=re.sub(r'\bph0tos\b','photos',text,flags=re.I)
     text=re.sub(r'\btrfc\b','traffic',text,flags=re.I)
+    text=re.sub(r'\bNagaski\b','Nagasaki',text)
+    text=re.sub(r'\bpple\b','people',text)
     text=re.sub(r'\blonge rGreen\b','longer Green',text)
     text=re.sub(r'\bWedn..\b','wednesday',text)
+    text=re.sub(r'\bdoing_ahh_that\b','doing ahh that',text)
+    text=re.sub(r'\btransporta.{1,}(?!\S)','transportation',text,flags=re.I)
+    text=re.sub(r'\bwomem\b','women',text,flags=re.I)
+    text=re.sub(r'\bwknd\b','weekend',text,flags=re.I)
+    text=re.sub(r'\baccidently\b','accidentally',text,flags=re.I)
+    text=re.sub(r'\bneighbour\b','neighbor',text,flags=re.I)
+    #text=re.sub(r'\b(\d{1,2})pm\b',r'\1 pm',text,flags=re.I)
     return text
 def expand_contractions(text):
     expanded_text = contractions.fix(text)
@@ -186,7 +204,6 @@ def clean_text(text):
     text=clean_twitter_text(text)
     text=fix_repeating_characters(text)
     text=convert_emoticons(text)
-    # text=remove_emoticons(text)
     text=clean_slang(text)
     text=expand_contractions(text)
     text=remove_punctuation(text)
