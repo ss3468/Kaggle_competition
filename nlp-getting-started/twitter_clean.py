@@ -144,13 +144,16 @@ def clean_slang(text):
     text=re.sub(r'\bidc\b','I don\'t care',text,flags=re.I)
     text=re.sub(r'\bicymi\b','in case you missed it',text,flags=re.I)
     text=re.sub(r'\b2day\b','today',text,flags=re.I)
+    text=re.sub(r'\baka\b','also known as',text,flags=re.I)
+    #Translations
+    text=re.sub(r'\bImagini noi si 2 clipuri\b','New images and 2 clips',text,flags=re.I)
     #slang terms
     text=re.sub(r'\b3p - 3\\:30a\b','3p - 3:30a',text)
     text=re.sub(r'\b2k(\d{2})\b',r'20\1',text,flags=re.I)
     text=re.sub(r'\b(\d{1,})\,(000)\b',r'\1\2',text,flags=re.I)
     text=re.sub(r'\bw/e\b','whatever',text,flags=re.I)
     text=re.sub(r'\bP/U\b','pick up',text,flags=re.I)
-    text=re.sub(r'(\bb4\b)|(\bbe4\b)','before',text,flags=re.I)
+    text=re.sub(r'(\bb4\b)|(\bbe4\b)|(\bbfore\b)','before',text,flags=re.I)
     text=re.sub(r'\bthx\b','thank you',text,flags=re.I)
     text=re.sub(r'\btlk\b','talk',text,flags=re.I)
     text=re.sub(r'\bbb\b','baby',text,flags=re.I)
@@ -163,9 +166,12 @@ def clean_slang(text):
     text=re.sub(r'\bdey\b','they',text,flags=re.I)
     text=re.sub(r'\bsrsly\b','seriously',text,flags=re.I)
     text=re.sub(r'\bwhatevs\b','whatever',text)
+    text=re.sub(r'\b4sake\b','for sake',text)
     text=re.sub(r'\bya\b','you',text)
     text=re.sub(r'\bany1\b','anyone',text,flags=re.I)
+    text=re.sub(r'\btryna\b','trying to',text,flags=re.I)
     text=re.sub(r'\bU.S \(A\)(?!\S)','USA',text)
+    text=re.sub(r'(?<!\S)U.S\b','United States',text)
     text=re.sub(r'\b(\d{1,})(\s?)yr(s?)\b',r'\1 year\3',text,flags=re.I)
     text=re.sub(r'\b(\d{1,})JST\b',r'\1 JST',text,flags=re.I)
     #misspellings
@@ -180,18 +186,27 @@ def clean_slang(text):
     text=re.sub(r'\bpple\b','people',text)
     text=re.sub(r'\blonge rGreen\b','longer Green',text)
     text=re.sub(r'\bWedn..\b','wednesday',text)
+    text=re.sub(r'\bafte..\b','after',text)
     text=re.sub(r'\bdoing_ahh_that\b','doing ahh that',text)
     text=re.sub(r'\btransporta.{1,}(?!\S)','transportation',text,flags=re.I)
     text=re.sub(r'\bwomem\b','women',text,flags=re.I)
     text=re.sub(r'\bwknd\b','weekend',text,flags=re.I)
     text=re.sub(r'\baccidently\b','accidentally',text,flags=re.I)
     text=re.sub(r'\bneighbour\b','neighbor',text,flags=re.I)
+    text=re.sub(r'\bshedid\b','she did',text,flags=re.I)
+    text=re.sub(r'\b4the\b','for the',text,flags=re.I)
+    text=re.sub(r'\bbtwn\b','between',text,flags=re.I)
+    text=re.sub(r'\bannoucement\b','announcement',text,flags=re.I)
+    text=re.sub(r'(\bbcuz\b)|(\bbcz\b)','because',text,flags=re.I)
     #text=re.sub(r'\b(\d{1,2})pm\b',r'\1 pm',text,flags=re.I)
     return text
 def expand_contractions(text):
     expanded_text = contractions.fix(text)
     expanded_text=re.sub(r"(\b\w+)'s\b",r"\1",expanded_text)
     return expanded_text
+def remove_nums(text):
+    cleaned_text = re.sub(r'\b\w*\d\w*\b', '', text)
+    return re.sub(r'\s+', ' ', cleaned_text).strip()
 def remove_punctuation(text):
     text=re.sub(r'(\w+)(\.){2,}(\w+)',r'\1 \3',text)
     return re.sub(r'(?<!\w)[^\w\s]|[^\w\s](?!\w)', '', text)
@@ -206,6 +221,7 @@ def clean_text(text):
     text=convert_emoticons(text)
     text=clean_slang(text)
     text=expand_contractions(text)
+    text=remove_nums(text)
     text=remove_punctuation(text)
     return text
 def manual_impute_label(df,text_col):
