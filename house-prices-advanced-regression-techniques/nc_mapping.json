@@ -1,0 +1,167 @@
+{
+    "MSSubClass": {
+        "20": "1-Story",
+        "30": "1-Story",
+        "40": "Multi/Split-Level",
+        "45": "1.5-Story",
+        "50": "1.5-Story",
+        "60": "2-Story",
+        "70": "2-Story",
+        "75": "Multi/Split-Level",
+        "80": "Multi/Split-Level",
+        "85": "Multi/Split-Level",
+        "90": "Duplex/Multi-Family",
+        "120": "1-Story",
+        "150": "1.5-Story",
+        "160": "2-Story",
+        "180": "Multi/Split-Level",
+        "190": "Duplex/Multi-Family"
+    },
+    "MSZoning": {
+        "RL": "Residential Low Density",
+        "RM": "Residential Medium Density",
+        "FV": "Other",
+        "RH": "Other",
+        "C (all)": "Other"
+    },
+    "LotShape": {
+        "Reg": "Reg",
+        "IR1": "Irreg",
+        "IR2": "Irreg",
+        "IR3": "Irreg"
+    },
+    "LotConfig": {
+        "Inside": "Standard",
+        "Corner": "Standard",
+        "CulDSac": "Premium",
+        "FR2": "Premium",
+        "FR3": "Premium"
+    },
+    "Exterior1st": {
+        "AsbShng": "Shingles-based",
+        "AsphShn": "Shingles-based",
+        "BrkComm": "Brick-based",
+        "BrkFace": "Brick-based",
+        "CBlock": "Cement-based",
+        "CemntBd": "Cement-based",
+        "HdBoard": "Wood-based",
+        "ImStucc": "Cement-based",
+        "MetalSd": "Metal-based",
+        "Other": "Other",
+        "Plywood": "Other",
+        "PreCast": "Other",
+        "Stone": "Stone-based",
+        "Stucco": "Cement-based",
+        "VinylSd": "Vinyl-based",
+        "Wd Sdng": "Wood-based",
+        "WdShing": "Wood-based"
+    },
+    "Exterior2nd": {
+        "AsbShng": "Shingles-based",
+        "AsphShn": "Shingles-based",
+        "Brk Cmn": "Brick-based",
+        "BrkFace": "Brick-based",
+        "CBlock": "Cement-based",
+        "CmentBd": "Cement-based",
+        "HdBoard": "Wood-based",
+        "ImStucc": "Cement-based",
+        "MetalSd": "Metal-based",
+        "Other": "Other",
+        "Plywood": "Other",
+        "PreCast": "Other",
+        "Stone": "Stone-based",
+        "Stucco": "Cement-based",
+        "VinylSd": "Vinyl-based",
+        "Wd Sdng": "Wood-based",
+        "Wd Shng": "Wood-based"
+    },
+    "Foundation": {
+        "BrkTil": "Brick & Tile",
+        "CBlock": "Cinder Block",
+        "PConc": "Poured Concrete",
+        "Slab": "Other",
+        "Stone": "Other",
+        "Wood": "Other"
+    },
+    "Electrical": {
+        "SBrkr": "Romex_Wiring",
+        "FuseA": "Romex_Wiring",
+        "FuseP": "FuseP",
+        "FuseF": "Mix",
+        "Mix": "Mix"
+    },
+    "Condition1": {
+        "Artery": "Road Proximity",
+        "Feedr": "Road Proximity",
+        "Norm": "Road Proximity",
+        "RRNn": "Railroad Proximity",
+        "RRAn": "Railroad Proximity",
+        "RRNe": "Railroad Proximity",
+        "RRAe": "Railroad Proximity",
+        "PosN": "Positive Features",
+        "PosA": "Positive Features"
+    },
+    "Condition2": {
+        "Artery": "Road Proximity",
+        "Feedr": "Road Proximity",
+        "Norm": "Road Proximity",
+        "RRNn": "Railroad Proximity",
+        "RRAn": "Railroad Proximity",
+        "RRNe": "Railroad Proximity",
+        "RRAe": "Railroad Proximity",
+        "PosN": "Positive Features",
+        "PosA": "Positive Features"
+    },
+    "HouseStyle": {
+        "1Story": "1Story",
+        "1.5Fin": "1.5Fin",
+        "2Story": "2Story",
+        "2.5Fin": "Other Styles",
+        "2.5Unf": "Other Styles",
+        "SFoyer": "Other Styles" ,
+        "SLvl": "Other Styles",
+        "1.5Unf": "Other Styles"
+    },
+    "RoofStyle": {
+        "Flat": "Other Roofs",
+        "Gable": "Gable",
+        "Gambrel": "Other Roofs",
+        "Hip": "Hip",
+        "Mansard": "Other Roofs",
+        "Shed": "Other Roofs"
+    },
+    "RoofMatl": {
+        "CompShg": "Standard Roofing",
+        "WdShake": "Wood Roofing",
+        "WdShngl": "Wood Roofing",
+        "ClyTile": "Specialty Roofing",
+        "Membran": "Specialty Roofing",
+        "Metal": "Specialty Roofing",
+        "Roll": "Specialty Roofing",
+        "Tar&Grv": "Flat Roofing"
+    },
+    "Heating": {
+        "GasA": "Forced Air",
+        "GasW": "Hot Water/Steam",
+        "OthW": "Hot Water/Steam",
+        "Grav": "Gravity-Based",
+        "Floor": "Gravity-Based",
+        "Wall": "Wall-Based"
+    },
+    "GarageType":{
+        "Attchd":"Attached",
+        "Basment": "Basement",
+        "BuiltIn": "Built-In",
+        "Detched": "Detached",
+        "2Types": "Other",
+        "CarPort": "Other",
+        "NA": "NA"
+    },
+    "MasVnrType":{
+        "BrkCmn":"Brick",
+        "BrkFace":"Brick",
+        "CBlock":"CBlock",
+        "None":"None",
+        "Stone":"Stone"
+    }
+}
